@@ -1,0 +1,32 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+Thumbs.db
+
+
+
+# Env files (do not commit secrets)
+.env
+backend/mongo-api/.env
+
+# Build artifacts
+build/
+coverage/
+
+# Editor
+.vscode/
+*.code-workspace
+
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+env/
+ENV/
+*.egg-info/
