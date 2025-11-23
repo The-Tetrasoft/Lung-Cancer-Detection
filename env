@@ -1,0 +1,2 @@
+# .env
+VITE_BACKEND_BASE=http://localhost:8000
