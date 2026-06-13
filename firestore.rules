@@ -1,0 +1,16 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow public read for users to check username availability
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Default rule: Allow read/write only if authenticated
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

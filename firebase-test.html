@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Connection Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: 600;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            max-height: 400px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+        .badge-error {
+            background: #dc3545;
+            color: white;
+        }
+        .badge-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Firebase Connection Test</h1>
+        <p>Test your Firebase backend connection and API endpoints</p>
+
+        <div id="overallStatus" class="status loading">
+            ⏳ Click "Run All Tests" to check connection...
+        </div>
+
+        <div style="margin: 20px 0;">
+            <button onclick="runAllTests()">🚀 Run All Tests</button>
+            <button onclick="clearResults()">🗑️ Clear Results</button>
+        </div>
+
+        <!-- Test 1: Backend Health -->
+        <div class="test-section">
+            <h3>Test 1: Backend Server Health <span id="test1-badge"></span></h3>
+            <p>Checking if backend server is running on http://localhost:8000</p>
+            <button onclick="testBackendHealth()">Run Test</button>
+            <div id="test1-result"></div>
+        </div>
+
+        <!-- Test 2: Get Doctors -->
+        <div class="test-section">
+            <h3>Test 2: Get Doctors from Firebase <span id="test2-badge"></span></h3>
+            <p>Fetching doctors list from /api/doctors</p>
+            <button onclick="testGetDoctors()">Run Test</button>
+            <div id="test2-result"></div>
+        </div>
+
+        <!-- Test 3: Get Users -->
+        <div class="test-section">
+            <h3>Test 3: Get Users from Firebase <span id="test3-badge"></span></h3>
+            <p>Fetching users list from /api/users</p>
+            <button onclick="testGetUsers()">Run Test</button>
+            <div id="test3-result"></div>
+        </div>
+
+        <!-- Test 4: Create Doctor -->
+        <div class="test-section">
+            <h3>Test 4: Create Doctor (Write Test) <span id="test4-badge"></span></h3>
+            <p>Testing Firebase write operations</p>
+            <button onclick="testCreateDoctor()">Run Test</button>
+            <div id="test4-result"></div>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:8000';
+
+        function updateOverallStatus() {
+            const badges = document.querySelectorAll('.badge');
+            const successCount = document.querySelectorAll('.badge-success').length;
+            const errorCount = document.querySelectorAll('.badge-error').length;
+            const totalTests = badges.length;
+
+            const statusDiv = document.getElementById('overallStatus');
+            
+            if (totalTests === 0) {
+                statusDiv.className = 'status loading';
+                statusDiv.innerHTML = '⏳ Click "Run All Tests" to check connection...';
+            } else if (errorCount > 0) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `❌ ${errorCount} test(s) failed. Firebase may not be connected properly.`;
+            } else if (successCount === totalTests) {
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = `✅ All ${totalTests} tests passed! Firebase is connected and working.`;
+            } else {
+                statusDiv.className = 'status loading';
+                statusDiv.innerHTML = `⏳ Running tests... (${successCount}/${totalTests} completed)`;
+            }
+        }
+
+        function setBadge(testNum, status, message) {
+            const badge = document.getElementById(`test${testNum}-badge`);
+            badge.className = `badge badge-${status}`;
+            badge.textContent = message;
+            updateOverallStatus();
+        }
+
+        function setResult(testNum, html) {
+            document.getElementById(`test${testNum}-result`).innerHTML = html;
+        }
+
+        async function testBackendHealth() {
+            setBadge(1, 'warning', 'Testing...');
+            setResult(1, '<div class="status loading">⏳ Connecting to backend...</div>');
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/`);
+                const text = await response.text();
+                
+                setBadge(1, 'success', 'PASS');
+                setResult(1, `
+                    <div class="status success">✅ Backend server is running!</div>
+                    <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                    <p><strong>Response:</strong></p>
+                    <pre>${text}</pre>
+                `);
+            } catch (error) {
+                setBadge(1, 'error', 'FAIL');
+                setResult(1, `
+                    <div class="status error">❌ Backend server is not responding</div>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p><strong>Solution:</strong> Make sure backend is running on port 8000</p>
+                    <pre>cd backend/mongo-api\nnpm run dev</pre>
+                `);
+            }
+        }
+
+        async function testGetDoctors() {
+            setBadge(2, 'warning', 'Testing...');
+            setResult(2, '<div class="status loading">⏳ Fetching doctors...</div>');
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/doctors`);
+                const data = await response.json();
+                
+                if (Array.isArray(data) && data.length > 0) {
+                    setBadge(2, 'success', 'PASS');
+                    setResult(2, `
+                        <div class="status success">✅ Successfully fetched ${data.length} doctor(s) from Firebase!</div>
+                        <p><strong>Sample Doctor:</strong></p>
+                        <pre>${JSON.stringify(data[0], null, 2)}</pre>
+                    `);
+                } else if (Array.isArray(data) && data.length === 0) {
+                    setBadge(2, 'warning', 'EMPTY');
+                    setResult(2, `
+                        <div class="status loading">⚠️ Firebase connected but no doctors found</div>
+                        <p>The database is empty. Try adding a doctor through the admin panel.</p>
+                    `);
+                } else {
+                    setBadge(2, 'error', 'FAIL');
+                    setResult(2, `
+                        <div class="status error">❌ Unexpected response format</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `);
+                }
+            } catch (error) {
+                setBadge(2, 'error', 'FAIL');
+                setResult(2, `
+                    <div class="status error">❌ Failed to fetch doctors</div>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `);
+            }
+        }
+
+        async function testGetUsers() {
+            setBadge(3, 'warning', 'Testing...');
+            setResult(3, '<div class="status loading">⏳ Fetching users...</div>');
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/users`);
+                const data = await response.json();
+                
+                if (Array.isArray(data)) {
+                    setBadge(3, 'success', 'PASS');
+                    setResult(3, `
+                        <div class="status success">✅ Successfully fetched ${data.length} user(s) from Firebase!</div>
+                        ${data.length > 0 ? `<p><strong>Sample User:</strong></p><pre>${JSON.stringify(data[0], null, 2)}</pre>` : '<p>No users in database yet.</p>'}
+                    `);
+                } else {
+                    setBadge(3, 'error', 'FAIL');
+                    setResult(3, `
+                        <div class="status error">❌ Unexpected response format</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `);
+                }
+            } catch (error) {
+                setBadge(3, 'error', 'FAIL');
+                setResult(3, `
+                    <div class="status error">❌ Failed to fetch users</div>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `);
+            }
+        }
+
+        async function testCreateDoctor() {
+            setBadge(4, 'warning', 'Testing...');
+            setResult(4, '<div class="status loading">⏳ Creating test doctor...</div>');
+
+            const testDoctor = {
+                name: 'Dr. Test Firebase',
+                specialty: 'Pulmonology',
+                hospital: 'Firebase Test Hospital',
+                experience: 5,
+                rating: 4.5,
+                availability: 'Mon-Fri, 9AM-5PM',
+                contact: 'test@firebase.com',
+                status: 'active'
+            };
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/doctors`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testDoctor)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.id) {
+                    setBadge(4, 'success', 'PASS');
+                    setResult(4, `
+                        <div class="status success">✅ Successfully created doctor in Firebase!</div>
+                        <p><strong>Doctor ID:</strong> ${data.id}</p>
+                        <p><strong>Created Doctor:</strong></p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                        <p><em>Note: You can delete this test doctor from the admin panel.</em></p>
+                    `);
+                } else {
+                    setBadge(4, 'error', 'FAIL');
+                    setResult(4, `
+                        <div class="status error">❌ Failed to create doctor</div>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `);
+                }
+            } catch (error) {
+                setBadge(4, 'error', 'FAIL');
+                setResult(4, `
+                    <div class="status error">❌ Failed to create doctor</div>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `);
+            }
+        }
+
+        async function runAllTests() {
+            clearResults();
+            await testBackendHealth();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testGetDoctors();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testGetUsers();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testCreateDoctor();
+        }
+
+        function clearResults() {
+            for (let i = 1; i <= 4; i++) {
+                setResult(i, '');
+                document.getElementById(`test${i}-badge`).textContent = '';
+                document.getElementById(`test${i}-badge`).className = 'badge';
+            }
+            updateOverallStatus();
+        }
+    </script>
+</body>
+</html>

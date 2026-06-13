@@ -3,20 +3,22 @@ dist/
 *.log
 .DS_Store
 Thumbs.db
+venv/
+.venv/
+__pycache__/
+.env.local
+.env.*.local
 
-# Env files (do not commit secrets)
+# Env files and secrets (do not commit)
 .env
 backend/mongo-api/.env
+backend/mongo-api/lungdx-*.json
 
 # Build artifacts
 build/
 coverage/
 
-# Editor
+# Editor/System
 .vscode/
+.idea/
 *.code-workspace
-
-# Firebase service account credential keys
-backend/mongo-api/lungdx-*.json
-*.json.local
-

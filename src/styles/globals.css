@@ -1,0 +1,484 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 16px;
+  /* Responsive layout variables */
+  --sidebar-left: clamp(12px, 2vw, 24px);
+  --sidebar-width: clamp(64px, 18vw, 280px); /* scales between small and large screens */
+  --header-height: clamp(48px, 6vh, 64px);
+  --gap-between: clamp(12px, 3vw, 48px);
+  --main-offset: calc(var(--sidebar-left) + var(--sidebar-width) + var(--gap-between));
+  --background: #ffffff;
+  --foreground: oklch(0.145 0 0);
+  --card: #ffffff;
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: #030213;
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.95 0.0058 264.53);
+  --secondary-foreground: #030213;
+  --muted: #ececf0;
+  --muted-foreground: #717182;
+  --accent: #e9ebef;
+  --accent-foreground: #030213;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(0, 0, 0, 0.1);
+  --input: transparent;
+  --input-background: #f3f3f5;
+  --switch-background: #cbced4;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: #030213;
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+}
+
+/* Respect safe area insets for modern devices (iOS notch, Android cutouts) */
+:root {
+  /* Use env() where supported; default to 0 otherwise */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+
+/* Responsive container padding */
+.outer-margins {
+  padding-left: clamp(12px, 4vw, 48px);
+  padding-right: clamp(12px, 4vw, 48px);
+}
+
+/* Mobile-first safe area bottom padding helper */
+.pb-safe-area-inset-bottom {
+  padding-bottom: calc(var(--safe-bottom) + 12px);
+}
+
+/* Small helper for responsive drawer width when using fixed values */
+.drawer-w-64 {
+  width: clamp(220px, 60vw, 320px);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html, body {
+    /* Prevent overscroll bounce on mobile */
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Ensure full viewport sizing and prevent horizontal gaps */
+  html, body, #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    /* Mobile optimizations */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Mobile-first responsive design */
+  html {
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+    /* Better font rendering on mobile */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+
+  /* Mobile app specific styles */
+  .mobile-app {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  /* Safe area insets for devices with notches */
+  .pt-safe-area-inset-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .pb-safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Touch-friendly interactive elements */
+  button, 
+  [role="button"], 
+  input[type="submit"], 
+  input[type="button"], 
+  .clickable {
+    min-height: 44px; /* iOS recommended touch target size */
+    min-width: 44px;
+    cursor: pointer;
+    /* Improve touch response */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    touch-action: manipulation;
+  }
+
+  /* Better input handling on mobile */
+  input, 
+  textarea, 
+  select {
+    /* Prevent zoom on iOS when focusing inputs */
+    font-size: 16px;
+    /* Better touch targets */
+    min-height: 44px;
+    /* Smooth interactions */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  /* Responsive images */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/**
+ * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
+ */
+@layer base {
+  :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
+    h1 {
+      font-size: var(--text-2xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h2 {
+      font-size: var(--text-xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h3 {
+      font-size: var(--text-lg);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h4 {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    p {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+
+    label {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    button {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    input {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+  }
+}
+
+html {
+  font-size: var(--font-size);
+}
+
+/* Custom animations */
+@keyframes doctor-wave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-20deg); }
+  75% { transform: rotate(20deg); }
+}
+
+.animate-doctor-wave {
+  animation: doctor-wave 1.5s ease-in-out infinite;
+  transform-origin: 130px 110px;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  :root {
+    --font-size: 18px; /* Larger base font for mobile readability */
+  }
+
+  /* Mobile navigation improvements */
+  .mobile-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--background);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+  }
+
+  /* Mobile-optimized spacing */
+  .mobile-spacing {
+    padding: 1rem;
+  }
+
+  /* Better mobile form inputs */
+  .mobile-input {
+    font-size: 16px !important; /* Prevent zoom on focus */
+    padding: 12px 16px;
+    border-radius: 8px;
+  }
+
+  /* Mobile-friendly buttons */
+  .mobile-button {
+    min-height: 48px;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  /* Safe area support for devices with notches */
+  .mobile-safe-area {
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
+/* Layout utility: responsive horizontal padding (prevents double left-shift when main is offset) */
+.outer-margins {
+  /* Use padding-inline so inner content keeps breathing room on both sides without affecting layout offset */
+  padding-inline-start: clamp(12px, 4vw, 4rem);
+  padding-inline-end: clamp(12px, 4vw, 4rem);
+}
+
+/* Add consistent vertical spacing between main sections */
+.sections-stack > * + * {
+  margin-top: 2rem; /* ~32px (space-y-8 equivalent) */
+}
+
+/* Nudge sidebar slightly from the very left edge on large screens */
+@media (min-width: 1024px) {
+  .sidebar-nudge {
+    left: 2cm !important; /* moved 2cm right */
+    width: var(--sidebar-width) !important;
+  }
+  :root {
+    --gap-between: 4cm; /* retain existing additional gap */
+    --main-offset: calc(2cm + var(--sidebar-width) + var(--extra-gap-desktop, 0px));
+  }
+}
+
+/* enforce larger gap between sidebar and main content on very large screens */
+@media (min-width: 1400px) {
+  :root {
+    --gap-between: 4cm;
+    --main-offset: calc(var(--sidebar-left) + var(--sidebar-width) + var(--gap-between));
+  }
+}
+
+/* Main offset class — ensures main content shifts right by sidebar + gap */
+.main-offset {
+  margin-left: var(--main-offset) !important;
+}
+
+/* Tablet fallback: use smaller gap on medium screens */
+@media (max-width: 1024px) {
+  .main-offset {
+    margin-left: calc(var(--sidebar-left) + var(--sidebar-width) + 2rem);
+  }
+}
+
+/* Mobile fallback: smaller static margin */
+@media (max-width: 600px) {
+  .main-offset {
+    margin-left: 0; /* sidebar becomes overlay or hidden; main uses full width */
+  }
+}
+
+/* Desktop: force a clear margin so main content never sits under the sidebar */
+@media (min-width: 1024px) {
+  .main-offset {
+    margin-left: 300px !important; /* sidebar (240px) + extra gap (~60px) */
+  }
+}
+
+/* Dashboard shell: centered light-blue panel that contains the page content */
+.dashboard-shell {
+  background: #eef6ff; /* soft light-blue */
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(16,24,40,0.04);
+}
+
+/* Tablet styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .tablet-layout {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+/* High DPI displays optimization */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+  /* Optimize for retina displays */
+  .high-dpi-optimized {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .landscape-mobile {
+    height: 100vh;
+    overflow-y: auto;
+  }
+}
+
+/* Dark mode mobile optimizations */
+@media (prefers-color-scheme: dark) {
+  .mobile-dark-mode {
+    /* Better contrast for mobile viewing in dark environments */
+    --background: oklch(0.1 0 0);
+    --foreground: oklch(0.95 0 0);
+  }
+}
+
+/* Touch device specific styles */
+@media (hover: none) and (pointer: coarse) {
+  /* Styles specifically for touch devices */
+  .touch-device button:hover {
+    /* Remove hover states on touch devices */
+    background-color: initial;
+  }
+
+  .touch-device .hover-effect:hover {
+    transform: none;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .animate-doctor-wave,
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
